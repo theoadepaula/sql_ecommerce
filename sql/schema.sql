@@ -143,4 +143,28 @@ CREATE TABLE productSupplier(
     idPsProduct INT NOT NULL,
     quantity INT NOT NULL,
     PRIMARY KEY (idPsSupplier, idPsProduct),
-    CONSTRAINT fk_prod_supplier
+    CONSTRAINT fk_prod_supplier FOREIGN KEY (idPsSupplier) REFERENCES supplier(idSupplier),
+    CONSTRAINT fk_prod_prod_p FOREIGN KEY (idPsProduct) REFERENCES product(idProduct)
+);
+
+-- PRODUTO TEM ESTOQUE (Nome no seu print: storageLocation)
+CREATE TABLE storageLocation(
+    idLproduct INT NOT NULL,
+    idLstorage INT NOT NULL,
+    location VARCHAR(255) NOT NULL, -- Coluna 'location' no print
+    quantity INT DEFAULT 0, -- Adicionada 'quantity' aqui, pois é um relacionamento N:M com dados
+    PRIMARY KEY (idLproduct, idLstorage),
+    CONSTRAINT fk_storage_location_product FOREIGN KEY (idLproduct) REFERENCES product(idProduct),
+    CONSTRAINT fk_storage_location_storage FOREIGN KEY (idLstorage) REFERENCES productStorage(idProdStorage)
+);
+
+-- ITEM DE PEDIDO (Nome no seu print: productOrder)
+CREATE TABLE productOrder(
+    idPOproduct INT NOT NULL,
+    idPOorder INT NOT NULL,
+    poQuantity INT DEFAULT 1,
+    poStatus ENUM('Disponível', 'Sem estoque') DEFAULT 'Disponível',
+    PRIMARY KEY (idPOproduct, idPOorder),
+    CONSTRAINT fk_po_product FOREIGN KEY (idPOproduct) REFERENCES product(idProduct),
+    CONSTRAINT fk_po_order FOREIGN KEY (idPOorder) REFERENCES orders(idOrder)
+);
