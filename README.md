@@ -40,3 +40,23 @@ O modelo lógico foi construído com base em um esquema padrão de e-commerce (C
 - Implementação:
   - A nova tabela delivery foi criada, contendo campos Status_Entrega (ENUM) e Codigo_Rastreio (VARCHAR).
   - O campo Status_Entrega utiliza um ENUM para garantir a integridade dos dados (Ex: 'Pendente', 'Enviado', 'Entregue').
+
+## Queries SQL Complexas (DQL)
+As consultas abaixo demonstram o domínio das cláusulas mais complexas, respondendo a perguntas de negócio e utilizando dados de teste inseridos no arquivo inserts.sql.
+
+Pergunta 1: Quantos pedidos foram feitos por cada cliente (PJ e PF)?
+Objetivo: Utilizar JUNÇÕES para unir Generalização/Especialização e AGREGAÇÃO (COUNT) para somar pedidos.
+
+``` sql
+SELECT
+    C.idClient,
+    -- COALESCE: Atributo Derivado para exibir o nome de PF ou Razão Social de PJ
+    COALESCE(PF.Lname, PJ.Razao_Social) AS Nome_Cliente,
+    COUNT(O.idOrder) AS Total_Pedidos
+FROM clients C
+LEFT JOIN clientPF PF ON C.idClient = PF.FK_idClient
+LEFT JOIN clientPJ PJ ON C.idClient = PJ.FK_idClient
+LEFT JOIN orders O ON C.idClient = O.idOrderClient
+GROUP BY C.idClient, Nome_Cliente
+ORDER BY Total_Pedidos DESC;
+```
